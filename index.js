@@ -86,6 +86,18 @@ async function run (){
             const deletedSpice = await spicesCollection.deleteOne(query);
             res.send(deletedSpice);
         });
+
+        app.get("/myItems", verifyJWT, async (req, res) => {
+        const decodedEmail = req.decoded.email;
+        const email = req.query.email;
+        if (email === decodedEmail) {
+            const myItems = await spicesCollection.find({ email: email }).toArray();
+            res.send(myItems);
+        } else {
+            res.status(403).send({ message: "forbidden access" });
+        }
+        });
+
     }
     finally{
         // await client.close();
