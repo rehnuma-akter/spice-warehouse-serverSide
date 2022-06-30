@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion, ObjectId, ObjectID } = require("mongodb");
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const app = express();
 const jwt = require("jsonwebtoken");
 const ObjectId = require('mongodb').ObjectId;
@@ -54,12 +54,29 @@ async function run (){
             const spices = await spicesCollection.find(query).toArray();
             res.send(spices);
         });
+
+        // Fetching spice via id
+        app.get("/spices/:id", async (req, res) => {
+        const spiceId = req.params.id;
+        const query = { _id: ObjectId(spiceId) };
+        const spice = await spicesCollection.findOne(query);
+        res.send(spice);
+        });
         
         //Adding one spice
         app.post("/spices", async(req, res) => {
             const spice = req.body;
             const newSpice = await spicesCollection.insertOne(spice);
             res.send(newSpice);
+        });
+
+        //updating one spice
+        app.put("/spices/:id", async (req, res) =>{
+            const spiceId = req.params.id;
+            const spice = req.body;
+            const query = { _id: ObjectId(spiceId) };
+            const updatedSpice = await spicesCollection.updateOne(query, { $set: spice });
+            res.send(updatedSpice);
         });
 
         //Delete one spice
