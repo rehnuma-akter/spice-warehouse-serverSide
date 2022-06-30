@@ -53,6 +53,13 @@ async function run (){
             const spices = await spicesCollection.find(query).toArray();
             res.send(spices);
         })
+        
+        //Adding one spice
+        app.post("/spices", async(req, res) => {
+            const spice = req.body;
+            const newSpice = await spicesCollection.insertOne(spice);
+            res.send(newSpice);
+        })
     }
     finally{
         // await client.close();
