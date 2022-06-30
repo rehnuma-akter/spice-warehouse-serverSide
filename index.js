@@ -1,9 +1,10 @@
 const express = require("express");
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId, ObjectID } = require("mongodb");
 const app = express();
 const jwt = require("jsonwebtoken");
+const ObjectId = require('mongodb').ObjectId;
 const port = process.env.PORT || 5000; 
 
 //Using the Middleware ---
@@ -52,14 +53,22 @@ async function run (){
             const query = {};
             const spices = await spicesCollection.find(query).toArray();
             res.send(spices);
-        })
+        });
         
         //Adding one spice
         app.post("/spices", async(req, res) => {
             const spice = req.body;
             const newSpice = await spicesCollection.insertOne(spice);
             res.send(newSpice);
-        })
+        });
+
+        //Delete one spice
+        app.delete("/spices/:id", async (req, res) => {
+            const spiceId = req.params.id;
+            const query = { _id: ObjectId(spiceId) };
+            const deletedSpice = await spicesCollection.deleteOne(query);
+            res.send(deletedSpice);
+        });
     }
     finally{
         // await client.close();
